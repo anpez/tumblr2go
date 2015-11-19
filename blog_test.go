@@ -15,7 +15,7 @@ func TestBlogInfo(t *testing.T) {
 
 	mockHttp := new(mocks.HttpClient)
 	mockHttp.On("Get", fmt.Sprintf("https://api.tumblr.com/v2/blog/%s/info?api_key=%s", BLOG_URL, API_KEY), mock.Anything).Return(nil).Run(func(args mock.Arguments) {
-		resp := `{"meta":{"status":200,"msg":"OK"},"response":{"blog":{"title":"David's Log","posts":3456,"name":"david","url":"http:\/\/david.tumblr.com\/","updated":1308953007,"description":"<p><strong>Mr. Karp<\/strong> is tall and skinny, with unflinching blue eyes a mop of brown hair.\r\nHe speaks incredibly fast and in complete paragraphs.</p>","ask":true,"ask_anon":false,"likes":12345}}}`
+		resp := `{"meta":{"status":200,"msg":"OK"},"response":{"blog":{"title":"David's Log","posts":3456,"name":"david","url":"http://david.tumblr.com/","updated":1308953007,"description":"<p><strong>Mr. Karp</strong> is tall and skinny, with unflinching blue eyes a mop of brown hair. He speaks incredibly fast and in complete paragraphs.</p>","ask":true,"ask_anon":false,"likes":12345}}}`
 
 		assert.Nil(t, json.Unmarshal([]byte(resp), args.Get(1)))
 	})
@@ -26,4 +26,18 @@ func TestBlogInfo(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.NotNil(t, info)
+
+	validInfo := &BlogInfo{
+		Title:                "David's Log",
+		Posts:                3456,
+		Name:                 "david",
+		URL:                  "http://david.tumblr.com/",
+		Updated:              1308953007,
+		Description:          `<p><strong>Mr. Karp</strong> is tall and skinny, with unflinching blue eyes a mop of brown hair. He speaks incredibly fast and in complete paragraphs.</p>`,
+		Ask:                  true,
+		AskAnon:              false,
+		Likes:                12345,
+		IsBlockedFromPrimary: false,
+	}
+	assert.Equal(t, info, validInfo)
 }
