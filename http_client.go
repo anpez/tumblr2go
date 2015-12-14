@@ -6,20 +6,34 @@ import (
 )
 
 type httpClient struct {
-	http.Client
+	http.RoundTripper
 }
 
 func newHttpClient() *httpClient {
-	return new(httpClient)
+	return &httpClient{
+		http.DefaultTransport,
+	}
 }
 
 func (client *httpClient) Get(url string, out interface{}) error {
-	response, err := client.Client.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
 	if nil != err {
 		return err
 	}
-	defer response.Body.Close()
 
-	decoder := json.NewDecoder(response.Body)
-	return decoder.Decode(out)
+	resp, err := client.RoundTrip(req)
+	if nil != err {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	var r Response
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&r)
+	if nil != err {
+		return err
+	}
+
+	return json.Unmarshal(r.Body, out)
 }

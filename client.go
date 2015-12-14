@@ -21,7 +21,7 @@ func NewClient(apiKey string) *Client {
 
 // Creates a new client for Tumblr API v2 using the provided api key
 // and the provided HttpClient (good for testing).
-func NewClientWithHttp(apiKey string, httpClient interfaces.HttpClient) *Client {
+func NewClientWithTransport(apiKey string, httpClient interfaces.HttpClient) *Client {
 	return &Client{
 		httpClient: httpClient,
 		apiKey:     apiKey,
